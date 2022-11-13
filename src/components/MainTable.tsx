@@ -13,17 +13,15 @@ const columns: readonly TableColumn[] = [
 		format: (value: number) => value.toLocaleString('en-US'),
 	},
 	{
-		id: 'size',
-		label: 'Size\u00a0(km\u00b2)',
+		id: 'seo',
+		label: 'SEO',
 		minWidth: 170,
-		align: 'right',
 		format: (value: number) => value.toLocaleString('en-US'),
 	},
 	{
-		id: 'density',
-		label: 'Density',
+		id: 'best-practices',
+		label: 'Best Practices',
 		minWidth: 170,
-		align: 'right',
 		format: (value: number) => value.toFixed(2),
 	},
 ];
@@ -76,6 +74,8 @@ export default function MainTable() {
 													<TableCell>{site.label}</TableCell>
 													<TableCell>{site.createdTimestamp}</TableCell>
 													<TableCell>{site.psi.metrics.lighthouse.Performance * 100}</TableCell>
+													<TableCell>{site.psi.metrics.lighthouse.SEO * 100}</TableCell>
+													<TableCell>{site.psi.metrics.lighthouse.BestPractices * 100}</TableCell>
 												</TableRow>
 										);
 									})}

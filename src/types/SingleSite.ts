@@ -5,7 +5,9 @@ export interface SingleSite {
     psi: {
         metrics: {
             lighthouse: {
-                Performance: number
+                Performance: number,
+                SEO: number,
+                BestPractices: number,
             }
         }
     },
