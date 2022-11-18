@@ -2,6 +2,7 @@ import * as React from 'react';
 import {useEffect} from "react";
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from '@mui/material';
 import {SingleSite, TableColumn} from '../types'
+import {timestampToDate} from '../utils'
 
 const columns: readonly TableColumn[] = [
 	{id: 'name', label: 'Name', minWidth: 170},
@@ -41,7 +42,7 @@ export default function MainTable() {
 	};
 
 	useEffect(() => {
-		fetch('https://courageous-panda-3bd74c.netlify.app/output/results.json')
+		fetch('https://mgautoperf.netlify.app/output/results.json')
 				.then((response) => response.json())
 				.then((data) => {
 					setSiteData(data.results)
@@ -73,10 +74,10 @@ export default function MainTable() {
 										return (
 												<TableRow hover tabIndex={-1} key={site.id}>
 													<TableCell>{site.label}</TableCell>
-													<TableCell>{site.createdTimestamp}</TableCell>
-													<TableCell>{site.psi?.metrics?.lighthouse?.Performance * 100}</TableCell>
-													<TableCell>{site.psi?.metrics?.lighthouse?.SEO * 100}</TableCell>
-													<TableCell>{site.psi?.metrics?.lighthouse?.BestPractices * 100}</TableCell>
+													<TableCell>{timestampToDate(site.createdTimestamp)}</TableCell>
+													<TableCell>{Math.round(site.psi?.metrics?.lighthouse?.Performance * 100)}</TableCell>
+													<TableCell>{Math.round(site.psi?.metrics?.lighthouse?.SEO * 100)}</TableCell>
+													<TableCell>{Math.round(site.psi?.metrics?.lighthouse?.BestPractices * 100)}</TableCell>
 												</TableRow>
 										);
 									})}
