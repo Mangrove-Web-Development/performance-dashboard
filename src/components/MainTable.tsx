@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {useEffect} from "react";
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from '@mui/material';
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Chip} from '@mui/material';
 import {SingleSite, TableColumn} from '../types'
-import {timestampToDate} from '../utils'
+import {timestampToDate, colorScore} from '../utils'
 
 const columns: readonly TableColumn[] = [
 	{id: 'name', label: 'Name', minWidth: 170},
@@ -70,14 +70,24 @@ export default function MainTable() {
 							{siteData
 									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 									.map((site: SingleSite) => {
+										const performanceScore = Math.round(site.psi?.metrics?.lighthouse?.Performance * 100)
+										const seoScore = Math.round(site.psi?.metrics?.lighthouse?.SEO * 100)
+										const bestPracticesScore = Math.round(site.psi?.metrics?.lighthouse?.BestPractices * 100)
+
 										if (site.status === "Error") return
 										return (
 												<TableRow hover tabIndex={-1} key={site.id}>
 													<TableCell>{site.label}</TableCell>
 													<TableCell>{timestampToDate(site.createdTimestamp)}</TableCell>
-													<TableCell>{Math.round(site.psi?.metrics?.lighthouse?.Performance * 100)}</TableCell>
-													<TableCell>{Math.round(site.psi?.metrics?.lighthouse?.SEO * 100)}</TableCell>
-													<TableCell>{Math.round(site.psi?.metrics?.lighthouse?.BestPractices * 100)}</TableCell>
+													<TableCell>
+														<Chip label={performanceScore} color={colorScore(performanceScore)} />
+													</TableCell>
+													<TableCell>
+														<Chip label={seoScore} color={colorScore(seoScore)} />
+													</TableCell>
+													<TableCell>
+														<Chip label={bestPracticesScore} color={colorScore(bestPracticesScore)} />
+													</TableCell>
 												</TableRow>
 										);
 									})}
