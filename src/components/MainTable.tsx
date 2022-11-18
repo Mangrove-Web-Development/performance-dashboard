@@ -69,13 +69,14 @@ export default function MainTable() {
 							{siteData
 									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 									.map((site: SingleSite) => {
+										if (site.status === "Error") return
 										return (
 												<TableRow hover tabIndex={-1} key={site.id}>
 													<TableCell>{site.label}</TableCell>
 													<TableCell>{site.createdTimestamp}</TableCell>
-													<TableCell>{site.psi.metrics.lighthouse.Performance * 100}</TableCell>
-													<TableCell>{site.psi.metrics.lighthouse.SEO * 100}</TableCell>
-													<TableCell>{site.psi.metrics.lighthouse.BestPractices * 100}</TableCell>
+													<TableCell>{site.psi?.metrics?.lighthouse?.Performance * 100}</TableCell>
+													<TableCell>{site.psi?.metrics?.lighthouse?.SEO * 100}</TableCell>
+													<TableCell>{site.psi?.metrics?.lighthouse?.BestPractices * 100}</TableCell>
 												</TableRow>
 										);
 									})}
