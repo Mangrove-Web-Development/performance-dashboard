@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useEffect} from "react";
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Chip} from '@mui/material';
 import {SingleSite, TableColumn} from '../types'
-import {timestampToDate, colorScore} from '../utils'
+import {colorScore} from '../utils'
 
 const columns: readonly TableColumn[] = [
 	{id: 'name', label: 'Name', minWidth: 170},
@@ -29,7 +29,7 @@ const columns: readonly TableColumn[] = [
 
 export default function MainTable() {
 	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(10);
+	const [rowsPerPage, setRowsPerPage] = React.useState(25);
 	const [siteData, setSiteData] = React.useState([]);
 
 	const handleChangePage = (event: unknown, newPage: number) => {
@@ -51,7 +51,7 @@ export default function MainTable() {
 
 	return (
 			<Paper sx={{width: '100%', overflow: 'hidden'}}>
-				<TableContainer sx={{maxHeight: 440}}>
+				<TableContainer sx={{maxHeight: 840}}>
 					<Table stickyHeader aria-label="sticky table">
 						<TableHead>
 							<TableRow>
@@ -70,6 +70,7 @@ export default function MainTable() {
 							{siteData
 									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 									.map((site: SingleSite) => {
+										const fetchTime = site.psi?.metadata?.fetchTime
 										const performanceScore = Math.round(site.psi?.metrics?.lighthouse?.Performance * 100)
 										const seoScore = Math.round(site.psi?.metrics?.lighthouse?.SEO * 100)
 										const bestPracticesScore = Math.round(site.psi?.metrics?.lighthouse?.BestPractices * 100)
@@ -78,7 +79,7 @@ export default function MainTable() {
 										return (
 												<TableRow hover tabIndex={-1} key={site.id}>
 													<TableCell>{site.label}</TableCell>
-													<TableCell>{timestampToDate(site.createdTimestamp)}</TableCell>
+													<TableCell>{fetchTime?.slice(0,10)}</TableCell>
 													<TableCell>
 														<Chip label={performanceScore} color={colorScore(performanceScore)} />
 													</TableCell>
@@ -95,7 +96,7 @@ export default function MainTable() {
 					</Table>
 				</TableContainer>
 				<TablePagination
-						rowsPerPageOptions={[10, 25, 100]}
+						rowsPerPageOptions={[25, 50, 100]}
 						component="div"
 						count={siteData.length}
 						rowsPerPage={rowsPerPage}

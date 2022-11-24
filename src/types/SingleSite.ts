@@ -4,6 +4,9 @@ export interface SingleSite {
     status: string,
     createdTimestamp: number,
     psi: {
+        metadata: {
+            fetchTime: string
+        },
         metrics: {
             lighthouse: {
                 Performance: number,
