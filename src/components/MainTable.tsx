@@ -1,8 +1,23 @@
 import * as React from 'react';
-import {useEffect} from "react";
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Chip} from '@mui/material';
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Box,
+	Button,
+	Chip,
+	Paper,
+	Typography,
+} from '@mui/material';
 import {SingleSite, TableColumn} from '../types'
 import {colorScore} from '../utils'
+import {useQuery} from "react-query";
+import {usePsiQuery} from "../hooks";
+import {getData} from "../api";
+import {CLIENT_LIST} from "../constants";
+import CruxDetails from "./CruxDetails";
+import LightHouseDetails from "./LightHouseDetails";
+
 
 const columns: readonly TableColumn[] = [
 	{id: 'name', label: 'Name', minWidth: 170},
@@ -28,82 +43,49 @@ const columns: readonly TableColumn[] = [
 ];
 
 export default function MainTable() {
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(25);
-	const [siteData, setSiteData] = React.useState([]);
+	const [expanded, setExpanded] = React.useState<string | false>(false);
 
-	const handleChangePage = (event: unknown, newPage: number) => {
-		setPage(newPage);
-	};
+	const handleChange =
+			(panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+				setExpanded(isExpanded ? panel : false);
+			};
 
-	const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
-
-	useEffect(() => {
-		fetch('https://mgautoperf.netlify.app/output/results.json')
-				.then((response) => response.json())
-				.then((data) => {
-					setSiteData(data.results)
-				})
-	}, [])
+	const {data} = useQuery('sites', async () => {
+		// Loop through the list of clients and get the data for each site
+		return await Promise.all(CLIENT_LIST.map(async (client: string) => {
+			const query = usePsiQuery(client);
+			return await getData(query);
+		}))
+	})
 
 	return (
 			<Paper sx={{width: '100%', overflow: 'hidden'}}>
-				<TableContainer sx={{maxHeight: 840}}>
-					<Table stickyHeader aria-label="sticky table">
-						<TableHead>
-							<TableRow>
-								{columns.map((column) => (
-										<TableCell
-												key={column.id}
-												align={column.align}
-												style={{minWidth: column.minWidth}}
-										>
-											{column.label}
-										</TableCell>
-								))}
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{siteData
-									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-									.map((site: SingleSite) => {
-										const fetchTime = site.psi?.metadata?.fetchTime
-										const performanceScore = Math.round(site.psi?.metrics?.lighthouse?.Performance * 100)
-										const seoScore = Math.round(site.psi?.metrics?.lighthouse?.SEO * 100)
-										const bestPracticesScore = Math.round(site.psi?.metrics?.lighthouse?.BestPractices * 100)
-
-										if (site.status === "Error") return
-										return (
-												<TableRow hover tabIndex={-1} key={site.id}>
-													<TableCell>{site.label}</TableCell>
-													<TableCell>{fetchTime?.slice(0,10)}</TableCell>
-													<TableCell>
-														<Chip label={performanceScore} color={colorScore(performanceScore)} />
-													</TableCell>
-													<TableCell>
-														<Chip label={seoScore} color={colorScore(seoScore)} />
-													</TableCell>
-													<TableCell>
-														<Chip label={bestPracticesScore} color={colorScore(bestPracticesScore)} />
-													</TableCell>
-												</TableRow>
-										);
-									})}
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<TablePagination
-						rowsPerPageOptions={[25, 50, 100]}
-						component="div"
-						count={siteData.length}
-						rowsPerPage={rowsPerPage}
-						page={page}
-						onPageChange={handleChangePage}
-						onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+				{data?.map((site) => (
+						<Accordion key={site.id} expanded={expanded === site.id} onChange={handleChange(site.id)}>
+							<AccordionSummary
+									expandIcon={
+										<svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path
+													d="M0.239639 0.244056C0.559112 -0.0813333 1.07718 -0.0813889 1.39671 0.244111L8.99981 7.98817L16.6033 0.244056C16.9228 -0.0813333 17.4408 -0.0813889 17.7604 0.244111C18.0799 0.569556 18.0799 1.09717 17.7604 1.42261L9.57832 9.75594C9.42488 9.91222 9.21679 10 8.99981 10C8.78282 10 8.57468 9.91217 8.4213 9.75589L0.239694 1.42256C-0.079888 1.09717 -0.0798884 0.5695 0.239639 0.244056Z"
+													fill="white"/>
+										</svg>
+									}
+									aria-controls="panel1bh-content"
+									id="panel1bh-header"
+							>
+								<Typography sx={{width: '33%', flexShrink: 0}}>
+									{site.id}
+								</Typography>
+								<Typography sx={{color: 'text.secondary'}}>{site.analysisUTCTimestamp}</Typography>
+							</AccordionSummary>
+							<AccordionDetails>
+								<Box sx={{marginBottom: 3 }}>
+									<CruxDetails cruxValues={site.loadingExperience.metrics}/>
+								</Box>
+								<LightHouseDetails lighthouseValues={site.lighthouseResult.audits}/>
+							</AccordionDetails>
+						</Accordion>
+				))}
 			</Paper>
 	)
 }
