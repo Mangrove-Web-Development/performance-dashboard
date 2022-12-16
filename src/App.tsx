@@ -13,7 +13,14 @@ const theme = createTheme({
 	},
 })
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retryDelay: 5000,
+			staleTime: 15000 * 60,
+		}
+	}
+})
 
 function App() {
 
