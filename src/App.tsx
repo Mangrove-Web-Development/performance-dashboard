@@ -29,7 +29,7 @@ const queryClient = new QueryClient({
 const persister = createSyncStoragePersister({
 	storage: window.localStorage,
 	serialize: data => compress(JSON.stringify(data)),
-	deserialize: data => JSON.parse(decompress(data)),
+	deserialize: data => JSON.parse(decompress(data) as string),
 });
 
 function App() {
