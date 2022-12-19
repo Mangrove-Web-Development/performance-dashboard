@@ -16,8 +16,8 @@ const theme = createTheme({
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			retryDelay: 5000,
-			staleTime: 15000 * 60,
+			retryDelay: 10000,
+			staleTime: (1000 * 60) * 30, // 30 minutes
 		}
 	}
 })

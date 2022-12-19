@@ -7,11 +7,12 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	Typography
 } from "@mui/material";
 import * as React from "react";
 
-export default function CruxDetails(props: Object) {
+import {CruxInterface} from "../interfaces";
+
+export default function CruxDetails(props: CruxInterface) {
 	const {cruxValues} = props
 
 	return (

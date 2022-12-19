@@ -4,42 +4,16 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
-	Button,
-	Chip,
 	Paper,
 	Typography,
 } from '@mui/material';
-import {SingleSite, TableColumn} from '../types'
 import {useQueries} from "react-query";
 import {usePsiQuery} from "../hooks";
 import {getData} from "../api";
 import {CLIENT_LIST} from "../constants";
 import CruxDetails from "./CruxDetails";
 import LightHouseDetails from "./LightHouseDetails";
-
-
-const columns: readonly TableColumn[] = [
-	{id: 'name', label: 'Name', minWidth: 170},
-	{id: 'time', label: 'Test Time', minWidth: 100},
-	{
-		id: 'performance',
-		label: 'Performance',
-		minWidth: 170,
-		format: (value: number) => value.toLocaleString('en-US'),
-	},
-	{
-		id: 'seo',
-		label: 'SEO',
-		minWidth: 170,
-		format: (value: number) => value.toLocaleString('en-US'),
-	},
-	{
-		id: 'best-practices',
-		label: 'Best Practices',
-		minWidth: 170,
-		format: (value: number) => value.toFixed(2),
-	},
-];
+import { timestampToDate } from "../utils";
 
 export default function MainTable() {
 	const [expanded, setExpanded] = React.useState<string | false>(false);
@@ -60,10 +34,11 @@ export default function MainTable() {
 
 	return (
 			<Paper sx={{width: '100%', overflow: 'hidden'}}>
-				{clientQueries?.map((site) => (
+				{clientQueries?.map((site, index) => (
 						<>
 							{site.isLoading && (
 									<Box sx={{
+										key: `report-${index}`,
 										height: '48px',
 										padding: '0 16px',
 										display: 'flex',
@@ -90,13 +65,23 @@ export default function MainTable() {
 											<Typography sx={{width: '33%', flexShrink: 0}}>
 												{site?.data?.id}
 											</Typography>
-											<Typography sx={{color: 'text.secondary'}}>{site?.data?.analysisUTCTimestamp}</Typography>
+											<Typography sx={{color: 'text.secondary'}}>
+												<b>Report Time:</b> {timestampToDate(site?.data?.analysisUTCTimestamp)}
+											</Typography>
 										</AccordionSummary>
 										<AccordionDetails>
-											<Box sx={{marginBottom: 3 }}>
-												<CruxDetails cruxValues={site?.data?.loadingExperience.metrics}/>
-											</Box>
-											<LightHouseDetails lighthouseValues={site?.data?.lighthouseResult?.audits}/>
+											{site?.data?.loadingExperience.metrics && (
+													<Box sx={{marginBottom: 3 }}>
+														<CruxDetails cruxValues={site?.data?.loadingExperience.metrics}/>
+													</Box>
+											)}
+
+											{site?.data?.lighthouseResult && (
+													<Box sx={{marginBottom: 3 }}>
+														<LightHouseDetails lighthouseValues={site?.data?.lighthouseResult?.audits}/>
+													</Box>
+											)}
+
 										</AccordionDetails>
 									</Accordion>
 							)}
