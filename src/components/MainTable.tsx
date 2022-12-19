@@ -57,17 +57,11 @@ export default function MainTable() {
 									</Box>
 							)}
 							{site?.isFetched && (
-									<Accordion key={site?.data?.desktop?.id} expanded={expanded === site?.data?.desktop?.id}
-									           onChange={handleChange(site?.data?.desktop?.id)}>
+									<Accordion
+											key={site?.data?.desktop?.id}
+											expanded
+									>
 										<AccordionSummary
-												expandIcon={
-													<svg width="18" height="10" viewBox="0 0 18 10" fill="none"
-													     xmlns="http://www.w3.org/2000/svg">
-														<path
-																d="M0.239639 0.244056C0.559112 -0.0813333 1.07718 -0.0813889 1.39671 0.244111L8.99981 7.98817L16.6033 0.244056C16.9228 -0.0813333 17.4408 -0.0813889 17.7604 0.244111C18.0799 0.569556 18.0799 1.09717 17.7604 1.42261L9.57832 9.75594C9.42488 9.91222 9.21679 10 8.99981 10C8.78282 10 8.57468 9.91217 8.4213 9.75589L0.239694 1.42256C-0.079888 1.09717 -0.0798884 0.5695 0.239639 0.244056Z"
-																fill="white"/>
-													</svg>
-												}
 												aria-controls="panel1bh-content"
 												id="panel1bh-header"
 										>
@@ -80,13 +74,24 @@ export default function MainTable() {
 										</AccordionSummary>
 										<AccordionDetails>
 
-											<Grid container spacing={2}>
+											<Grid container spacing={2} mb={1}>
 												<Grid item md={6}>
 													<ScoreTitle
 															title="Desktop"
 															score={site?.data?.desktop?.lighthouseResult?.categories?.performance?.score * 100}
 													/>
+												</Grid>
+												<Grid item md={6}>
+													<ScoreTitle
+															title="Mobile"
+															score={site?.data?.mobile?.lighthouseResult?.categories?.performance?.score * 100}
+													/>
+												</Grid>
+											</Grid>
 
+
+											<Grid container spacing={2} sx={{ maxHeight: '300px', overflow: 'auto' }}>
+												<Grid item md={6}>
 													{site?.data?.desktop?.loadingExperience.metrics && (
 															<Box sx={{marginBottom: 3}}>
 																<CruxDetails cruxValues={site?.data?.desktop?.loadingExperience.metrics}/>
@@ -100,11 +105,6 @@ export default function MainTable() {
 													)}
 												</Grid>
 												<Grid item md={6}>
-													<ScoreTitle
-															title="Mobile"
-															score={site?.data?.mobile?.lighthouseResult?.categories?.performance?.score * 100}
-													/>
-
 													{site?.data?.mobile?.loadingExperience.metrics && (
 															<Box sx={{marginBottom: 3}}>
 																<CruxDetails cruxValues={site?.data?.mobile?.loadingExperience.metrics}/>
