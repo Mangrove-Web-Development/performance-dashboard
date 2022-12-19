@@ -18,7 +18,7 @@ export default function LightHouseDetails(props: LighthouseInterface) {
 	return (
 			<Box>
 				<TableContainer component={Paper}>
-					<Table sx={{minWidth: 650, backgroundColor: 'black'}} aria-label="simple table">
+					<Table sx={{backgroundColor: 'black'}} aria-label="simple table">
 						<TableHead>
 							<TableRow>
 								<TableCell>Lighthouse Results</TableCell>

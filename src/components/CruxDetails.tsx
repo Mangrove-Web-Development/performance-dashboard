@@ -18,7 +18,7 @@ export default function CruxDetails(props: CruxInterface) {
 	return (
 			<Box>
 				<TableContainer component={Paper}>
-					<Table sx={{ minWidth: 650, backgroundColor: 'black' }} aria-label="simple table">
+					<Table sx={{ backgroundColor: 'black' }} aria-label="simple table">
 						<TableHead>
 							<TableRow>
 								<TableCell>Chrome User Experience Report Results</TableCell>
