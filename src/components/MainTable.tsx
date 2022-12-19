@@ -4,12 +4,11 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
-	Chip,
 	Grid,
 	Paper,
 	Typography,
 } from '@mui/material';
-import {useQueries} from "react-query";
+import {useQueries} from "@tanstack/react-query";
 import {usePsiQuery} from "../hooks";
 import {getData} from "../api";
 import {CLIENT_LIST} from "../constants";
@@ -34,15 +33,12 @@ export default function MainTable() {
 	}
 
 
-	const clientQueries = useQueries(
-			CLIENT_LIST.map((client, index) => ({
-						queryKey: [`client-${index}`],
-						queryFn: () => (
-								getDesktopAndMobileData(client)
-						),
-					})
-			)
-	)
+	const clientQueries = useQueries({
+		queries: CLIENT_LIST.map(client => ({
+			queryKey: ['client', client],
+			queryFn: () => getDesktopAndMobileData(client),
+		}))
+	})
 
 	return (
 			<Paper sx={{width: '100%', overflow: 'hidden'}}>
