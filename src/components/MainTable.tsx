@@ -35,10 +35,9 @@ export default function MainTable() {
 	return (
 			<Paper sx={{width: '100%', overflow: 'hidden'}}>
 				{clientQueries?.map((site, index) => (
-						<>
+						<div key={`report-${index}`}>
 							{site.isLoading && (
 									<Box sx={{
-										key: `report-${index}`,
 										height: '48px',
 										padding: '0 16px',
 										display: 'flex',
@@ -85,7 +84,7 @@ export default function MainTable() {
 										</AccordionDetails>
 									</Accordion>
 							)}
-						</>
+						</div>
 				))}
 			</Paper>
 	)
